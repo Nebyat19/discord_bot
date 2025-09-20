@@ -9,6 +9,10 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+from keep_alive import keep_alive
+
+keep_alive()
+
 # Get the token from environment variable
 token = os.getenv('DISCORD_BOT_TOKEN')
 
