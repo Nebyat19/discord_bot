@@ -83,7 +83,7 @@ async def leaderboard(interaction: discord.Interaction):
     sorted_streaks = sorted(streaks.items(), key=lambda x: x[1], reverse=True)
 
     msg = "==========================\n"
-    msg += "🏆 English Practice Leaderboard\n"
+    msg += "🏆 Our Voice Session Champions \n\n"
 
     for i, (uid, count) in enumerate(sorted_streaks, 1):
         member = interaction.guild.get_member(uid)
