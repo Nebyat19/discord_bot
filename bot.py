@@ -3,6 +3,14 @@ from discord import app_commands
 from discord.ext import commands
 import json
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get the token from environment variable
+token = os.getenv('DISCORD_BOT_TOKEN')
 
 # ---------------------- Intents ----------------------
 intents = discord.Intents.default()
@@ -61,6 +69,8 @@ async def today(interaction: discord.Interaction):
 
 @bot.tree.command(name="leaderboard", description="Show attendance leaderboard")
 async def leaderboard(interaction: discord.Interaction):
+    await interaction.response.defer()  # Acknowledge quickly
+
     streaks = {}
     for date, users_ids in attendance.items():
         for uid in users_ids:
@@ -87,7 +97,9 @@ async def leaderboard(interaction: discord.Interaction):
 
     msg += "==========================\n"
     msg += "🔥 Keep joining daily and climb the leaderboard!"
-    await interaction.response.send_message(msg)
 
+    # Use followup instead of response
+    await interaction.followup.send(msg)
 # ---------------------- Run Bot ----------------------
-bot.run("YOUR_BOT_TOKEN")
+bot.run(token)
+
