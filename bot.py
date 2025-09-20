@@ -59,8 +59,18 @@ async def on_ready():
 
 @bot.tree.command(name="today", description="Show today's session participants")
 async def today(interaction: discord.Interaction):
+    # Ensure command is used in a server
+    if not interaction.guild:
+        await interaction.response.send_message("⚠️ This command can only be used in a server, not in DMs.")
+        return
+
     today_date = datetime.now().strftime("%Y-%m-%d")
     users_ids = attendance.get(today_date, [])
+
+    if not users_ids:
+        await interaction.response.send_message("No one has joined today's session yet.")
+        return
+
     mentions = [f"<@{uid}>" for uid in users_ids]
 
     msg = "==========================\n"
@@ -74,6 +84,11 @@ async def today(interaction: discord.Interaction):
 @bot.tree.command(name="leaderboard", description="Show attendance leaderboard")
 async def leaderboard(interaction: discord.Interaction):
     await interaction.response.defer()  # Acknowledge quickly
+
+    # Check if command is used in a server
+    if not interaction.guild:
+        await interaction.followup.send("⚠️ This command can only be used in a server, not in DMs.")
+        return
 
     streaks = {}
     for date, users_ids in attendance.items():
