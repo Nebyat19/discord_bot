@@ -92,7 +92,7 @@ async def leaderboard(interaction: discord.Interaction):
     sorted_streaks = sorted(streaks.items(), key=lambda x: x[1], reverse=True)
 
     msg = "==========================\n"
-    msg += "\n🏆 Our Voice Session Champions \n\n"
+    msg += "\n🏆 Voice Session Champions \n\n"
 
     last_count = None
     last_medal = None
