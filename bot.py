@@ -50,7 +50,7 @@ async def on_voice_state_update(member, before, after):
 
                 channel = bot.get_channel(WHO_IS_HERE_CHANNEL_ID)
                 channel_name = VOICE_CHANNEL_IDS[after.channel.id]
-                await channel.send(f"🎤 {member.mention} joined the {channel_name} session!")
+                await channel.send(f"🎤 {member.mention} joined the {channel_name}")
 
 # ---------------------- Slash Commands ----------------------
 @bot.event
