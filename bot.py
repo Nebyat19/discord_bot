@@ -89,21 +89,20 @@ async def leaderboard(interaction: discord.Interaction):
     data = supabase.table("attendance").select("user_id").execute()
     from collections import Counter
     streaks = Counter([row["user_id"] for row in data.data])
-    sorted_streaks = sorted(streaks.items(), key=lambda x: x[1], reverse=True)
+    sorted_streaks = sorted(streaks.items(), key=lambda x: x[1], reverse=True)[:20]  # Limit to top 20
 
     msg = "==========================\n"
-    msg += "\n🏆 Voice Session Champions \n\n"
+    msg += "🏆 Top 20 Voice Session Champions\n\n"
 
     last_count = None
     last_medal = None
     rank = 0
 
-    for i, (uid, count) in enumerate(sorted_streaks, 1):
+    for uid, count in sorted_streaks:
         member = interaction.guild.get_member(uid)
         if not member:
             continue
 
-        # If count is the same as the last, give same medal
         if count == last_count:
             medal = last_medal
         else:
@@ -117,19 +116,24 @@ async def leaderboard(interaction: discord.Interaction):
             else:
                 medal = f"{rank}️⃣"
 
-        msg += f"{medal} {member.mention} - {count} days\n"
-
+        msg += f"{medal} {member.display_name} - {count} days\n"
         last_count = count
         last_medal = medal
 
-    # Count total unique members who ever joined
     total_participants = len(streaks.keys())
-
     msg += "\n==========================\n"
     msg += f"🔥 Keep joining and climb higher!\n"
-    msg += f"👥 Total participants so far: {total_participants}"
+    msg += f"👥 Total participants: {total_participants}"
+
+    if len(msg) > 2000:
+        msg = msg[:1997] + "..."
 
     await interaction.followup.send(msg)
+
+
+
+# give role to user if they have joined for 100 days
+# give role if user joined voice channel for 5 days
 
 # ---------------------- Run Bot ----------------------
 bot.run(token)
