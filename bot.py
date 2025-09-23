@@ -26,27 +26,31 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-VOICE_CHANNEL_ID = 1417512186456051824  # Replace with your VC ID
-WHO_IS_HERE_CHANNEL_ID = 1417941986463191112  # Replace with your text channel ID
+VOICE_CHANNEL_IDS = {
+    1417512186456051824: "Daily Session 1",  # Channel ID: Channel Name
+    1418305785515086014: "Daily Session 2",
+    1418509411722465423: "Daily Session 3"
+}
+WHO_IS_HERE_CHANNEL_ID = 1417941986463191112
 
-# ---------------------- Voice Join Event ----------------------
 @bot.event
 async def on_voice_state_update(member, before, after):
-    if after.channel and after.channel.id == VOICE_CHANNEL_ID:
-        if not before.channel or before.channel.id != VOICE_CHANNEL_ID:
+    if after.channel and after.channel.id in VOICE_CHANNEL_IDS:
+        if not before.channel or before.channel.id not in VOICE_CHANNEL_IDS:
             today = datetime.now().strftime("%Y-%m-%d")
 
-            # Check if already recorded in Supabase
             existing = supabase.table("attendance").select("*") \
                 .eq("user_id", member.id).eq("date", today).execute()
-            if not existing.data:  # Not yet recorded
+
+            if not existing.data:
                 supabase.table("attendance").insert({
                     "user_id": member.id,
                     "date": today
                 }).execute()
 
                 channel = bot.get_channel(WHO_IS_HERE_CHANNEL_ID)
-                await channel.send(f"🎤 {member.mention} joined the session!")
+                channel_name = VOICE_CHANNEL_IDS[after.channel.id]
+                await channel.send(f"🎤 {member.mention} joined the {channel_name} session!")
 
 # ---------------------- Slash Commands ----------------------
 @bot.event
